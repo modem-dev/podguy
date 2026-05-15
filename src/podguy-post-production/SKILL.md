@@ -114,6 +114,7 @@ Recommended single-show pattern:
 - `dist/analysis/<episode>/quotes.md`
 - `dist/analysis/<episode>/proper_nouns.md`
 - `dist/analysis/fixtures/<fixture>/...` for test-media outputs
+- `dist/test-fixtures/open-license/cordkillers-572/` for the optional downloaded Cordkillers sample
 
 For multi-show usage, prefer:
 
@@ -349,4 +350,5 @@ If you suggest cuts, explain why:
 - Transcript prep CLI: [../../scripts/prepare_transcript_analysis.py](../../scripts/prepare_transcript_analysis.py)
 - Clip cutter CLI: [../../scripts/cut_clips.py](../../scripts/cut_clips.py)
 - Fixture builder: [../../scripts/make_test_fixture.sh](../../scripts/make_test_fixture.sh)
+- Open-license sample downloader: [../../scripts/download_sample_media.sh](../../scripts/download_sample_media.sh)
 - Smoke tests: [../../tests/test_scan_podcast.sh](../../tests/test_scan_podcast.sh), [../../tests/test_transcribe_video.sh](../../tests/test_transcribe_video.sh), [../../tests/test_prepare_transcript_analysis.sh](../../tests/test_prepare_transcript_analysis.sh), [../../tests/test_cut_clips.sh](../../tests/test_cut_clips.sh)

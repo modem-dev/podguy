@@ -14,6 +14,16 @@ This skill complements `podguy-post-production`:
 - `scripts/cut_clips.py` does deterministic ffmpeg cutting
 - generated media stays under gitignored `dist/analysis/`
 
+## Sample media
+
+When a real video-podcast fixture is useful, run:
+
+```bash
+scripts/download_sample_media.sh
+```
+
+This downloads a local excerpt from Cordkillers 572 under `dist/test-fixtures/open-license/cordkillers-572/` with attribution. The default 00:08:00-00:11:50 excerpt includes a three-person podcast layout, lower thirds, chat/sidebar graphics, a Patreon bumper, and an outro/interstitial card.
+
 ## Inputs to gather
 
 Identify:
@@ -124,5 +134,6 @@ Avoid exporting moments that:
 ## References
 
 - Cutter: [../../scripts/cut_clips.py](../../scripts/cut_clips.py)
+- Open-license sample downloader: [../../scripts/download_sample_media.sh](../../scripts/download_sample_media.sh)
 - Clip prompt: [../../prompts/clips.md](../../prompts/clips.md)
 - Cut-clips prompt: [../../prompts/cut-clips.md](../../prompts/cut-clips.md)
