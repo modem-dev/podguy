@@ -1,0 +1,33 @@
+.pi/*
+!.pi/settings.json
+.DS_Store
+.venv/
+__pycache__/
+dist/
+analysis/
+episodes/
+
+# Local video assets
+*.mp4
+*.mov
+*.m4v
+*.mkv
+*.avi
+*.webm
+*.mpg
+*.mpeg
+*.wmv
+*.ts
+*.mts
+
+# Local audio assets
+*.mp3
+*.m4a
+*.wav
+*.aac
+*.flac
+*.ogg
+
+# Checked-in TypeScript source files
+!src/*.ts
+!src/**/*.ts

@@ -1,0 +1,20 @@
+[project]
+name = "podguy"
+version = "0.1.0"
+description = "Small tooling repo for repeatable podcast and video-podcast post-production tasks."
+requires-python = ">=3.9"
+dependencies = []
+
+[dependency-groups]
+transcribe-mlx = [
+  "mlx-whisper>=0.4.3",
+]
+transcribe-faster = [
+  "faster-whisper",
+]
+transcribe-whisper = [
+  "openai-whisper",
+]
+
+[tool.uv]
+package = false

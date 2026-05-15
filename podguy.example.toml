@@ -1,0 +1,26 @@
+# Copy this file to podguy.toml and customize it for your show.
+
+show_name = "My Podcast"
+show_slug = "my-podcast"
+default_output_dir = "dist/analysis"
+hosts = ["Host One", "Host Two"]
+tone = "smart, conversational, practical"
+audience = "listeners interested in the episode topic"
+chapter_style = "concise, listener-friendly chapters"
+preferred_review = "quick_pass"
+
+[outputs]
+chapters = true
+clips = true
+cuts = true
+show_notes = true
+quotes = true
+proper_nouns = true
+
+[transcription]
+preferred_backend = "auto"
+preferred_model = ""
+
+[video_scan]
+enabled = true
+sample_interval_seconds = 0.5

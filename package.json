@@ -1,0 +1,15 @@
+{
+  "name": "podguy",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "Pi-first post-production workflow for podcasts and video podcasts.",
+  "scripts": {
+    "podguy": "./podguy"
+  },
+  "pi": {
+    "skills": ["./src"],
+    "extensions": ["./src/podguy-startup.ts"],
+    "prompts": ["./prompts"]
+  }
+}

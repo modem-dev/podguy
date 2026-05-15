@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root=$(cd "$(dirname "$0")" && pwd)
+cd "$repo_root"
+
+system_prompt="You are operating inside the podguy repo. Focus on podcast post-production tasks: transcript generation, optional video interstitial detection, YouTube/podcast chapters, clips, cuts, show notes, quotes, proper noun review, and editorial feedback. Use podguy.toml when present. Default to the podguy-post-production workflow unless the user explicitly asks for something else."
+
+if [[ -x "$repo_root/node_modules/.bin/pi" ]]; then
+  pi_cmd=("$repo_root/node_modules/.bin/pi")
+elif command -v pi >/dev/null 2>&1; then
+  pi_cmd=("pi")
+else
+  cat >&2 <<'EOF'
+error: pi is not installed.
+
+Install it with one of:
+  npm install -g @mariozechner/pi-coding-agent
+  npm install --save-dev @mariozechner/pi-coding-agent
+
+Then run ./podguy again.
+EOF
+  exit 1
+fi
+
+exec "${pi_cmd[@]}" \
+  --no-skills \
+  --skill "$repo_root/src/podguy-post-production/SKILL.md" \
+  --no-prompt-templates \
+  --prompt-template "$repo_root/prompts" \
+  --no-extensions \
+  --extension "$repo_root/src/podguy-startup.ts" \
+  --append-system-prompt "$system_prompt" \
+  --session-dir "$repo_root/.pi/sessions" \
+  "$@"
