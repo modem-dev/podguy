@@ -28,6 +28,7 @@ Default to the `podguy-post-production` workflow unless the user explicitly asks
 - skip the visual scanner for audio-only inputs
 - use transcript evidence and timecodes whenever possible when giving editorial feedback
 - treat generated clip media as review exports, not final mastered social edits
+- use `scripts/download_sample_media.sh` when a real open-license video-podcast sample is helpful; keep downloaded samples under gitignored `dist/`
 
 ## Interaction guidance
 

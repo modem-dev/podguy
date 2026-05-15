@@ -10,6 +10,7 @@ Pi-first post-production workflow for podcasts and video podcasts. Run `./podguy
 - Find likely interstitial and inserted-content timecodes from episode videos.
 - Ask the agent for chapters, clip candidates, cut suggestions, show notes, quotes, and proper noun cleanup.
 - Cut selected clip candidates into review exports for TikTok, Reels, YouTube Shorts, trailers, or social posts.
+- Optionally download an open-license Cordkillers video-podcast excerpt for local evaluation.
 - Configure show-specific context with `podguy.toml` without changing the workflow.
 
 ## Install
@@ -202,6 +203,22 @@ uv run python scripts/cut_clips.py \
 
 The cutter writes generated media plus `manifest.json`. Vertical/square modes use center-crop framing, so treat them as review exports unless the framing has been checked.
 
+### Download open-license sample media
+
+For a real video-podcast sample, download a local excerpt from Cordkillers 572:
+
+```bash
+scripts/download_sample_media.sh
+```
+
+This writes to:
+
+```text
+dist/test-fixtures/open-license/cordkillers-572/
+```
+
+The script cuts a 3m50s excerpt starting at `00:08:00` from the CC BY-SA 4.0 source video. That range was chosen because it includes multiple podcast layouts, lower thirds, chat/sidebar graphics, a Patreon bumper, and an outro/interstitial card. The script also writes `ATTRIBUTION.md` and keeps all generated media under gitignored `dist/`.
+
 ## Docs
 
 - Launcher: [podguy](podguy)
@@ -215,7 +232,8 @@ The cutter writes generated media plus `manifest.json`. Vertical/square modes us
 - Transcript prep CLI: [scripts/prepare_transcript_analysis.py](scripts/prepare_transcript_analysis.py)
 - Clip cutter CLI: [scripts/cut_clips.py](scripts/cut_clips.py)
 - Fixture builder: [scripts/make_test_fixture.sh](scripts/make_test_fixture.sh)
-- Smoke tests: [tests/test_scan_podcast.sh](tests/test_scan_podcast.sh), [tests/test_transcribe_video.sh](tests/test_transcribe_video.sh), [tests/test_prepare_transcript_analysis.sh](tests/test_prepare_transcript_analysis.sh), [tests/test_cut_clips.sh](tests/test_cut_clips.sh)
+- Open-license sample downloader: [scripts/download_sample_media.sh](scripts/download_sample_media.sh)
+- Smoke tests: [tests/test_scan_podcast.sh](tests/test_scan_podcast.sh), [tests/test_transcribe_video.sh](tests/test_transcribe_video.sh), [tests/test_prepare_transcript_analysis.sh](tests/test_prepare_transcript_analysis.sh), [tests/test_cut_clips.sh](tests/test_cut_clips.sh), [tests/test_download_sample_media.sh](tests/test_download_sample_media.sh)
 
 ## Contributing
 
@@ -228,6 +246,7 @@ bash tests/test_transcribe_video.sh
 bash tests/test_scan_podcast.sh
 bash tests/test_prepare_transcript_analysis.sh
 bash tests/test_cut_clips.sh
+bash tests/test_download_sample_media.sh
 ```
 
 For larger workflow or heuristic changes, open an issue first with the media type, expected vs actual output, and your OS/backend/model details.
