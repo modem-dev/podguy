@@ -65,7 +65,10 @@ export default function podguyStartupExtension(pi: ExtensionAPI) {
 
 				const projectAgents = resolve(cwd, "AGENTS.md");
 				const userAgents = resolve(home, ".pi/agent/AGENTS.md");
-				const skillPath = resolve(cwd, "src/podguy-post-production/SKILL.md");
+				const skillPaths = [
+					resolve(cwd, "src/podguy-post-production/SKILL.md"),
+					resolve(cwd, "src/podguy-clip-cutter/SKILL.md"),
+				];
 				const promptsPath = resolve(cwd, "prompts");
 				const extensionPath = resolve(cwd, "src/podguy-startup.ts");
 				const profilePath = [resolve(cwd, "podguy.toml"), resolve(cwd, "podcast.toml")].find((path) => existsSync(path));
@@ -76,7 +79,9 @@ export default function podguyStartupExtension(pi: ExtensionAPI) {
 					...(existsSync(projectAgents) ? [{ path: toDisplayPath(projectAgents), scope: "project" }] : []),
 					...(existsSync(userAgents) ? [{ path: toDisplayPath(userAgents), scope: "user" }] : []),
 				];
-				const skillItems = existsSync(skillPath) ? [{ path: toDisplayPath(skillPath), scope: "project" }] : [];
+				const skillItems = skillPaths
+					.filter((path) => existsSync(path))
+					.map((path) => ({ path: toDisplayPath(path), scope: "project" }));
 				const promptItems = existsSync(promptsPath) ? [{ path: toDisplayPath(promptsPath), scope: "project" }] : [];
 				const extensionItems = existsSync(extensionPath) ? [{ path: toDisplayPath(extensionPath), scope: "project" }] : [];
 				const profileItems = profilePath ? [{ path: toDisplayPath(profilePath), scope: "project" }] : [];
@@ -116,7 +121,8 @@ export default function podguyStartupExtension(pi: ExtensionAPI) {
 			"- If your ask is broad, pi should clarify: quick pass or full review?",
 			"- Quick pass = optional scan + transcript + prep + short summary",
 			"- Full review = quick pass + chapters + clips + cuts + notes + quotes + cleanup",
-			"- Optional shortcuts: /phase1 ep006 | /full-review ep006 | /chapters ep006 | /cuts ep006",
+			"- Cut social exports after clips exist: /cut-clips ep006",
+			"- Optional shortcuts: /phase1 ep006 | /full-review ep006 | /chapters ep006 | /cuts ep006 | /cut-clips ep006",
 		]);
 	});
 

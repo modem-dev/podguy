@@ -9,6 +9,7 @@ Pi-first post-production workflow for podcasts and video podcasts. Run `./podguy
 - Prepare long transcript artifacts for reliable editorial review.
 - Find likely interstitial and inserted-content timecodes from episode videos.
 - Ask the agent for chapters, clip candidates, cut suggestions, show notes, quotes, and proper noun cleanup.
+- Cut selected clip candidates into review exports for TikTok, Reels, YouTube Shorts, trailers, or social posts.
 - Configure show-specific context with `podguy.toml` without changing the workflow.
 
 ## Install
@@ -20,7 +21,7 @@ Install the required tools:
 ```bash
 npm install -g @mariozechner/pi-coding-agent
 brew install uv
-# optional, only for local transcription backends and video scanning
+# optional for local transcription backends, video scanning, and clip cutting
 brew install ffmpeg
 ```
 
@@ -39,7 +40,7 @@ uv sync --group transcribe-whisper  # OpenAI Whisper
 Notes:
 
 - `scripts/scan_podcast.swift` is macOS-only and requires `swift`.
-- `scripts/transcribe_video.py` requires Python 3.9+ and `uv`.
+- `scripts/transcribe_video.py` and `scripts/cut_clips.py` require Python 3.9+ and `uv`.
 - The `mock` backend exists for tests and setup validation, not real transcription.
 
 ## Configure a show
@@ -63,7 +64,7 @@ cd podguy
 ./podguy
 ```
 
-The launcher starts pi with only the podguy repo skill and startup widget loaded, adds a podguy-specific system hint, and stores sessions under `.pi/sessions`.
+The launcher starts pi with only the podguy repo skills and startup widget loaded, adds a podguy-specific system hint, and stores sessions under `.pi/sessions`.
 
 If you want the raw pi command instead, `./podguy` is a thin wrapper around pi for this repo.
 
@@ -98,6 +99,7 @@ The intended flow is:
    - cuts for time
    - strong and weak sections
    - highlight-worthy clips
+   - exported social/review cuts from selected clip candidates
    - show notes and references
    - quote candidates
    - proper noun or spelling issues
@@ -116,20 +118,21 @@ If you ask for one specific deliverable, podguy should do that directly.
 
 Podguy writes generated episode artifacts under `dist/analysis/` by default. The entire `dist/` directory is gitignored so transcripts, scans, thumbnails, notes, and local media-derived files stay out of version control.
 
-## Repo skill
+## Repo skills
 
-The repo-local skill is the main interface for this project:
+The repo-local skills are the main interface for this project:
 
 - Launcher: [podguy](podguy)
-- Skill: [src/podguy-post-production/SKILL.md](src/podguy-post-production/SKILL.md)
+- Main skill: [src/podguy-post-production/SKILL.md](src/podguy-post-production/SKILL.md)
+- Clip cutting skill: [src/podguy-clip-cutter/SKILL.md](src/podguy-clip-cutter/SKILL.md)
 - Startup widget extension: [src/podguy-startup.ts](src/podguy-startup.ts)
 - Prompt templates: [prompts](prompts)
 - Profile example: [podguy.example.toml](podguy.example.toml)
 - Discovery: [package.json](package.json)
 - Project instructions: [AGENTS.md](AGENTS.md)
-- Underlying tools: [scripts/scan_podcast.swift](scripts/scan_podcast.swift), [scripts/transcribe_video.py](scripts/transcribe_video.py), [scripts/prepare_transcript_analysis.py](scripts/prepare_transcript_analysis.py)
+- Underlying tools: [scripts/scan_podcast.swift](scripts/scan_podcast.swift), [scripts/transcribe_video.py](scripts/transcribe_video.py), [scripts/prepare_transcript_analysis.py](scripts/prepare_transcript_analysis.py), [scripts/cut_clips.py](scripts/cut_clips.py)
 
-The launcher and skill explain the user workflow and tell pi how to run the software stack.
+The launcher and skills explain the user workflow and tell pi how to run the software stack.
 
 ## Manual tool reference
 
@@ -174,18 +177,45 @@ uv run python scripts/prepare_transcript_analysis.py \
   --plain-output-names
 ```
 
+### Cut selected clip candidates
+
+After generating `dist/analysis/ep006/clips.md`, cut original-aspect review exports:
+
+```bash
+uv run python scripts/cut_clips.py \
+  "episode-006-draft.mp4" \
+  dist/analysis/ep006/clips.md \
+  dist/analysis/ep006/clips/cuts
+```
+
+For simple vertical Shorts/TikTok/Reels review exports:
+
+```bash
+uv run python scripts/cut_clips.py \
+  "episode-006-draft.mp4" \
+  dist/analysis/ep006/clips.md \
+  dist/analysis/ep006/clips/shorts \
+  --aspect vertical \
+  --pad-start 1 \
+  --pad-end 1
+```
+
+The cutter writes generated media plus `manifest.json`. Vertical/square modes use center-crop framing, so treat them as review exports unless the framing has been checked.
+
 ## Docs
 
 - Launcher: [podguy](podguy)
-- Skill: [src/podguy-post-production/SKILL.md](src/podguy-post-production/SKILL.md)
+- Main skill: [src/podguy-post-production/SKILL.md](src/podguy-post-production/SKILL.md)
+- Clip cutting skill: [src/podguy-clip-cutter/SKILL.md](src/podguy-clip-cutter/SKILL.md)
 - Startup widget extension: [src/podguy-startup.ts](src/podguy-startup.ts)
 - Project instructions: [AGENTS.md](AGENTS.md)
 - Profile example: [podguy.example.toml](podguy.example.toml)
 - Scanner CLI: [scripts/scan_podcast.swift](scripts/scan_podcast.swift)
 - Transcript CLI: [scripts/transcribe_video.py](scripts/transcribe_video.py)
 - Transcript prep CLI: [scripts/prepare_transcript_analysis.py](scripts/prepare_transcript_analysis.py)
+- Clip cutter CLI: [scripts/cut_clips.py](scripts/cut_clips.py)
 - Fixture builder: [scripts/make_test_fixture.sh](scripts/make_test_fixture.sh)
-- Smoke tests: [tests/test_scan_podcast.sh](tests/test_scan_podcast.sh), [tests/test_transcribe_video.sh](tests/test_transcribe_video.sh), [tests/test_prepare_transcript_analysis.sh](tests/test_prepare_transcript_analysis.sh)
+- Smoke tests: [tests/test_scan_podcast.sh](tests/test_scan_podcast.sh), [tests/test_transcribe_video.sh](tests/test_transcribe_video.sh), [tests/test_prepare_transcript_analysis.sh](tests/test_prepare_transcript_analysis.sh), [tests/test_cut_clips.sh](tests/test_cut_clips.sh)
 
 ## Contributing
 
@@ -197,6 +227,7 @@ Before opening a PR:
 bash tests/test_transcribe_video.sh
 bash tests/test_scan_podcast.sh
 bash tests/test_prepare_transcript_analysis.sh
+bash tests/test_cut_clips.sh
 ```
 
 For larger workflow or heuristic changes, open an issue first with the media type, expected vs actual output, and your OS/backend/model details.

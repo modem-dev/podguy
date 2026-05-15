@@ -2,7 +2,7 @@
 
 This repository is primarily operated through `pi` for podcast post-production work.
 
-Default to the `podguy-post-production` workflow unless the user explicitly asks for something else.
+Default to the `podguy-post-production` workflow unless the user explicitly asks for something else. Use `podguy-clip-cutter` when the user asks to export or cut social clips.
 
 ## Primary tasks
 
@@ -10,6 +10,7 @@ Default to the `podguy-post-production` workflow unless the user explicitly asks
 - generate transcripts for draft, preview, or final episode exports
 - derive YouTube/podcast chapters in timestamp-title format
 - give editorial feedback such as cuts, highlights, weak sections, and insert opportunities
+- cut selected highlight moments into review exports for TikTok, Reels, YouTube Shorts, trailers, or social posts
 - draft publishing assets such as show notes, quote sheets, and proper noun review
 
 ## Podcast profile
@@ -26,6 +27,7 @@ Default to the `podguy-post-production` workflow unless the user explicitly asks
 - support audio-only files, video drafts, preview exports, and final renders
 - skip the visual scanner for audio-only inputs
 - use transcript evidence and timecodes whenever possible when giving editorial feedback
+- treat generated clip media as review exports, not final mastered social edits
 
 ## Interaction guidance
 

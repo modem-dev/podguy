@@ -20,6 +20,7 @@ Use this workflow when the user wants any of the following:
 - find likely interstitial or inserted-content timecodes in video episodes
 - propose YouTube or podcast chapter markers
 - review the episode for cuts, highlights, clips, weak sections, and publishing assets
+- cut/export selected clip candidates for TikTok, Reels, YouTube Shorts, trailers, or social review
 
 ## Podcast profile
 
@@ -106,6 +107,8 @@ Recommended single-show pattern:
 - `dist/analysis/<episode>/transcript_index.json`
 - `dist/analysis/<episode>/chapters.txt`
 - `dist/analysis/<episode>/clips.md`
+- `dist/analysis/<episode>/clips/cuts/`
+- `dist/analysis/<episode>/clips/shorts/`
 - `dist/analysis/<episode>/cut_report.md`
 - `dist/analysis/<episode>/show_notes.md`
 - `dist/analysis/<episode>/quotes.md`
@@ -223,6 +226,7 @@ When prompt templates are available, treat them as optional shortcuts for the re
 - `/chapters`
 - `/clips`
 - `/cuts`
+- `/cut-clips`
 - `/show-notes`
 - `/quotes`
 - `/proper-nouns`
@@ -303,6 +307,33 @@ Focus on:
 - which names, products, or terms look suspicious and should be reviewed
 - where interstitials or inserted visuals would help pacing or context, when video is available
 
+## Clip cutting
+
+When the user wants actual media files for likely clippable moments, use the `podguy-clip-cutter` skill and `scripts/cut_clips.py` after clip candidates have been selected.
+
+Default original-aspect command:
+
+```bash
+uv run python scripts/cut_clips.py \
+  <input-media> \
+  dist/analysis/<episode>/clips.md \
+  dist/analysis/<episode>/clips/cuts
+```
+
+Vertical Shorts/TikTok/Reels review export:
+
+```bash
+uv run python scripts/cut_clips.py \
+  <input-media> \
+  dist/analysis/<episode>/clips.md \
+  dist/analysis/<episode>/clips/shorts \
+  --aspect vertical \
+  --pad-start 1 \
+  --pad-end 1
+```
+
+Treat generated clips as review exports, not final edit points. Warn when simple center-crop vertical framing may cut off speakers, slides, or screen shares.
+
 If you suggest cuts, explain why:
 
 - repetitive
@@ -316,5 +347,6 @@ If you suggest cuts, explain why:
 - Scanner: [../../scripts/scan_podcast.swift](../../scripts/scan_podcast.swift)
 - Transcript CLI: [../../scripts/transcribe_video.py](../../scripts/transcribe_video.py)
 - Transcript prep CLI: [../../scripts/prepare_transcript_analysis.py](../../scripts/prepare_transcript_analysis.py)
+- Clip cutter CLI: [../../scripts/cut_clips.py](../../scripts/cut_clips.py)
 - Fixture builder: [../../scripts/make_test_fixture.sh](../../scripts/make_test_fixture.sh)
-- Smoke tests: [../../tests/test_scan_podcast.sh](../../tests/test_scan_podcast.sh), [../../tests/test_transcribe_video.sh](../../tests/test_transcribe_video.sh)
+- Smoke tests: [../../tests/test_scan_podcast.sh](../../tests/test_scan_podcast.sh), [../../tests/test_transcribe_video.sh](../../tests/test_transcribe_video.sh), [../../tests/test_prepare_transcript_analysis.sh](../../tests/test_prepare_transcript_analysis.sh), [../../tests/test_cut_clips.sh](../../tests/test_cut_clips.sh)
