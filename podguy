@@ -25,7 +25,7 @@ fi
 
 exec "${pi_cmd[@]}" \
   --no-skills \
-  --skill "$repo_root/src/podguy-post-production/SKILL.md" \
+  --skill "$repo_root/src" \
   --no-prompt-templates \
   --prompt-template "$repo_root/prompts" \
   --no-extensions \
