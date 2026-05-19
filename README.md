@@ -233,7 +233,9 @@ The script cuts a 3m50s excerpt starting at `00:08:00` from the CC BY-SA 4.0 sou
 - Clip cutter CLI: [scripts/cut_clips.py](scripts/cut_clips.py)
 - Fixture builder: [scripts/make_test_fixture.sh](scripts/make_test_fixture.sh)
 - Open-license sample downloader: [scripts/download_sample_media.sh](scripts/download_sample_media.sh)
-- Smoke tests: [tests/test_scan_podcast.sh](tests/test_scan_podcast.sh), [tests/test_transcribe_video.sh](tests/test_transcribe_video.sh), [tests/test_prepare_transcript_analysis.sh](tests/test_prepare_transcript_analysis.sh), [tests/test_cut_clips.sh](tests/test_cut_clips.sh), [tests/test_download_sample_media.sh](tests/test_download_sample_media.sh)
+- Test wrapper: [scripts/test.sh](scripts/test.sh)
+- CI workflow: [.github/workflows/ci.yml](.github/workflows/ci.yml)
+- Smoke tests: [tests/test_scan_podcast.sh](tests/test_scan_podcast.sh), [tests/test_transcribe_video.sh](tests/test_transcribe_video.sh), [tests/test_prepare_transcript_analysis.sh](tests/test_prepare_transcript_analysis.sh), [tests/test_cut_clips.sh](tests/test_cut_clips.sh), [tests/test_download_sample_media.sh](tests/test_download_sample_media.sh), [tests/test_launcher.sh](tests/test_launcher.sh)
 
 ## Contributing
 
@@ -242,11 +244,16 @@ Small, focused PRs are welcome.
 Before opening a PR:
 
 ```bash
-bash tests/test_transcribe_video.sh
-bash tests/test_scan_podcast.sh
-bash tests/test_prepare_transcript_analysis.sh
-bash tests/test_cut_clips.sh
-bash tests/test_download_sample_media.sh
+npm run format:check
+npm run lint
+npm run typecheck
+npm test
+```
+
+You can also run the shell smoke tests directly:
+
+```bash
+bash scripts/test.sh
 ```
 
 For larger workflow or heuristic changes, open an issue first with the media type, expected vs actual output, and your OS/backend/model details.

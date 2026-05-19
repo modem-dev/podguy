@@ -1,9 +1,11 @@
 ---
 description: Cut selected social/highlight clips from an episode media file
 ---
+
 Cut social/highlight clips for: $@
 
 Workflow:
+
 1. Identify the target episode slug, source media file, and clip-candidate file.
    - Default candidate file: `dist/analysis/<slug>/clips.md`.
    - If clip candidates do not exist yet, first create them with the `/clips` workflow.
@@ -15,6 +17,7 @@ Workflow:
 5. Inspect `dist/analysis/<slug>/clips/cuts/manifest.json` or `dist/analysis/<slug>/clips/shorts/manifest.json` and summarize what was cut.
 
 Output expectations:
+
 - Do not claim the clips are final edit points; call them review exports.
 - Include the output directory and manifest path.
 - List the strongest exported clips with start/end timecodes.

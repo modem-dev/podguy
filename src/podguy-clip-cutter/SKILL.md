@@ -48,6 +48,7 @@ Markdown example:
 
 ```md
 ## Why this market flipped
+
 - 00:12:14 - 00:13:08 — Strong contrarian claim with a clean payoff.
 ```
 
@@ -62,9 +63,7 @@ JSON example:
 
 ```json
 {
-  "clips": [
-    { "title": "Why this market flipped", "start": "00:12:14", "end": "00:13:08" }
-  ]
+  "clips": [{ "title": "Why this market flipped", "start": "00:12:14", "end": "00:13:08" }]
 }
 ```
 
