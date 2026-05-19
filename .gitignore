@@ -29,6 +29,8 @@ episodes/
 *.flac
 *.ogg
 
-# Checked-in TypeScript source files
+# Checked-in TypeScript source/test files
 !src/*.ts
 !src/**/*.ts
+!tests/*.ts
+!tests/**/*.ts
