@@ -237,9 +237,9 @@ This repo does not have a published security policy yet. If you find a sensitive
 
 ## Sponsor
 
-Sponsored by [Modem](https://modem.dev?utm_source=github&utm_medium=oss&utm_campaign=podguy).
+Sponsored by [Modem](https://modem.dev?utm_source=github&utm_medium=oss&utm_campaign=oss_podguy&utm_content=readme_footer).
 
-<a href="https://modem.dev?utm_source=github&utm_medium=oss&utm_campaign=podguy">
+<a href="https://modem.dev?utm_source=github&utm_medium=oss&utm_campaign=oss_podguy&utm_content=readme_footer">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://modem.dev/images/logo/svg/modem-combined-white.svg">
     <source media="(prefers-color-scheme: light)" srcset="https://modem.dev/images/logo/svg/modem-combined-black.svg">
