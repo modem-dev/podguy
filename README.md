@@ -12,6 +12,7 @@ Pi-first post-production tooling for podcast and video-podcast editors who want 
 - Scans video episodes for likely interstitials and non-host inserts.
 - Generates chapters, clip candidates, cut reports, show notes, quotes, and proper noun checks.
 - Cuts selected highlight ranges into review exports for TikTok, Reels, YouTube Shorts, trailers, or social posts.
+- Uploads finished episodes to YouTube with metadata composed from analysis artifacts.
 
 Generated transcripts, scans, thumbnails, notes, and clip exports go under gitignored `dist/` by default.
 
@@ -157,6 +158,29 @@ uv run python scripts/cut_clips.py \
 
 The cutter writes generated media plus `manifest.json`. Vertical and square modes use center-crop framing, so treat them as review exports unless the framing has been checked.
 
+### Publish to YouTube
+
+One-time setup: create a Google Cloud project with the YouTube Data API v3 enabled, create a Desktop-app OAuth client, save the JSON to `~/.config/podguy/youtube/client_secret.json`, then authenticate:
+
+```bash
+uv sync --group youtube
+uv run --group youtube python scripts/youtube_publish.py auth
+```
+
+Upload an episode (private by default; use `--dry-run` first to preview the request):
+
+```bash
+uv run --group youtube python scripts/youtube_publish.py upload \
+  "episode-006-final.mp4" \
+  --title "Ep 6: Why this market flipped" \
+  --description-file dist/analysis/ep006/youtube-description.md \
+  --chapters-file dist/analysis/ep006/chapters.md
+```
+
+Other subcommands cover thumbnails, SRT captions, playlists, scheduled publishing (`--publish-at`), status checks, and metadata updates. Defaults like privacy, category, tags, and a description footer come from the `[youtube]` section of `podguy.toml`.
+
+Each upload costs 1600 of the default 10000 daily YouTube API quota units, and videos uploaded through unverified API projects may stay locked private until the project passes a YouTube API audit.
+
 ### Download real sample media
 
 Use the Cordkillers open-license video-podcast excerpt for local evaluation:
@@ -194,9 +218,10 @@ preferred_review = "quick pass"
 - [`podguy`](podguy): launcher for pi with repo-local skills, prompts, and startup extension.
 - [`src/podguy-post-production/SKILL.md`](src/podguy-post-production/SKILL.md): main editorial workflow skill.
 - [`src/podguy-clip-cutter/SKILL.md`](src/podguy-clip-cutter/SKILL.md): social clip export workflow skill.
+- [`src/podguy-youtube-publisher/SKILL.md`](src/podguy-youtube-publisher/SKILL.md): YouTube upload workflow skill.
 - [`src/podguy-startup.ts`](src/podguy-startup.ts): pi startup widget.
 - [`prompts/`](prompts): optional prompt shortcuts.
-- [`scripts/`](scripts): deterministic scanner, transcript, prep, fixture, sample, and clip-cutting tools.
+- [`scripts/`](scripts): deterministic scanner, transcript, prep, fixture, sample, clip-cutting, and YouTube publishing tools.
 - [`tests/`](tests): smoke tests wrapped by Vitest.
 - [`AGENTS.md`](AGENTS.md): repo guidance for coding agents.
 

@@ -9,6 +9,7 @@ dependencies = []
 transcribe-mlx = ["mlx-whisper>=0.4.3"]
 transcribe-faster = ["faster-whisper"]
 transcribe-whisper = ["openai-whisper"]
+youtube = ["google-api-python-client>=2.100", "google-auth-oauthlib>=1.0"]
 
 [tool.uv]
 package = false

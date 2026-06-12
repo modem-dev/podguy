@@ -6,6 +6,7 @@ const smokeTests = [
   "tests/test_prepare_transcript_analysis.sh",
   "tests/test_scan_podcast.sh",
   "tests/test_cut_clips.sh",
+  "tests/test_youtube_publish.sh",
   "tests/test_download_sample_media.sh",
   "tests/test_launcher.sh",
 ];

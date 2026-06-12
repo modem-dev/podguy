@@ -68,6 +68,7 @@ export default function podguyStartupExtension(pi: ExtensionAPI) {
         const skillPaths = [
           resolve(cwd, "src/podguy-post-production/SKILL.md"),
           resolve(cwd, "src/podguy-clip-cutter/SKILL.md"),
+          resolve(cwd, "src/podguy-youtube-publisher/SKILL.md"),
         ];
         const promptsPath = resolve(cwd, "prompts");
         const extensionPath = resolve(cwd, "src/podguy-startup.ts");
@@ -132,7 +133,8 @@ export default function podguyStartupExtension(pi: ExtensionAPI) {
       "- Quick pass = optional scan + transcript + prep + short summary",
       "- Full review = quick pass + chapters + clips + cuts + notes + quotes + cleanup",
       "- Cut social exports after clips exist: /cut-clips ep006",
-      "- Optional shortcuts: /phase1 ep006 | /full-review ep006 | /chapters ep006 | /cuts ep006 | /cut-clips ep006",
+      "- Upload finished episodes to YouTube: /publish-youtube ep006",
+      "- Optional shortcuts: /phase1 ep006 | /full-review ep006 | /chapters ep006 | /cuts ep006 | /cut-clips ep006 | /publish-youtube ep006",
     ]);
   });
 
