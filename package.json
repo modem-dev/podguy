@@ -32,7 +32,7 @@
     "prepare": "simple-git-hooks"
   },
   "devDependencies": {
-    "@mariozechner/pi-coding-agent": "^0.73.1",
+    "@earendil-works/pi-coding-agent": "^0.78.1",
     "@types/node": "^25.9.0",
     "lint-staged": "^17.0.5",
     "oxfmt": "^0.50.0",
