@@ -35,6 +35,7 @@ import argparse
 import csv
 import json
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -269,6 +270,12 @@ def iter_selected_clips(clips: list[ClipSpec], limit: Optional[int]) -> Iterable
         yield index, clip
 
 
+def write_manifest(manifest: dict[str, Any], output_dir: Path) -> None:
+    manifest_path = output_dir / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote manifest: {manifest_path}", file=sys.stderr)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Cut social/highlight clip candidates from media using ffmpeg.")
     parser.add_argument("input_media", type=Path, help="Source audio/video file")
@@ -337,9 +344,17 @@ def main() -> int:
         )
 
         if args.dry_run:
-            print(" ".join(command))
+            print(shlex.join(command))
         else:
-            subprocess.run(command, check=True)
+            try:
+                subprocess.run(command, check=True)
+            except subprocess.CalledProcessError as error:
+                # Record the clips that already succeeded before bailing out.
+                write_manifest(manifest, args.output_dir)
+                raise SystemExit(
+                    f"error: ffmpeg failed for clip {index} ({clip.title}): "
+                    f"exit code {error.returncode}"
+                )
             print(output_path)
 
         manifest["clips"].append(
@@ -361,9 +376,7 @@ def main() -> int:
             }
         )
 
-    manifest_path = args.output_dir / "manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote manifest: {manifest_path}", file=sys.stderr)
+    write_manifest(manifest, args.output_dir)
     return 0
 
 

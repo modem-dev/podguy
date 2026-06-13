@@ -17,3 +17,6 @@ All notable user-visible changes to this project are documented in this file.
 - Correct the launcher's "pi is not installed" message to point at `npm install` and the renamed `@earendil-works/pi-coding-agent` package.
 - Document the OAuth test-user requirement, testing-mode token expiry, uv first-run behavior, and the macOS-only scanner skip rule.
 - Give the "no transcription backend found" error actionable `uv sync --group ...` commands.
+- Make the visual scanner fail with clean errors instead of crashing on missing inputs, zero sample intervals, and audio-only files.
+- Download sample media atomically so interrupted downloads no longer leave truncated files that look complete.
+- Report ffmpeg clip-cut failures cleanly and still write the manifest for clips that already succeeded.

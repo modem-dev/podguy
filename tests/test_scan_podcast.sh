@@ -52,4 +52,28 @@ for column in ["time_seconds", "timecode", "label", "thumb_path"]:
 print("scan fixture assertions passed")
 PY
 
+# Degenerate inputs must fail with a clean error, not a Swift crash.
+
+if swift scripts/scan_podcast.swift "$work_dir/does-not-exist.mp4" "$work_dir/scan-missing" 0.5 >/dev/null 2>"$work_dir/missing.err"; then
+  echo "error: expected missing input to fail" >&2
+  exit 1
+fi
+grep -q "error: input file not found" "$work_dir/missing.err"
+
+if swift scripts/scan_podcast.swift "$fixture" "$work_dir/scan-interval" 0 >/dev/null 2>"$work_dir/interval.err"; then
+  echo "error: expected zero interval to fail" >&2
+  exit 1
+fi
+grep -q "error: sample interval must be greater than 0" "$work_dir/interval.err"
+
+if command -v ffmpeg >/dev/null 2>&1; then
+  audio_fixture="$work_dir/audio-only.wav"
+  ffmpeg -hide_banner -loglevel error -y -f lavfi -i "sine=frequency=440:duration=3" "$audio_fixture"
+  if swift scripts/scan_podcast.swift "$audio_fixture" "$work_dir/scan-audio" 0.5 >/dev/null 2>"$work_dir/audio.err"; then
+    echo "error: expected audio-only input to fail cleanly" >&2
+    exit 1
+  fi
+  grep -q "error:" "$work_dir/audio.err"
+fi
+
 echo "ok: scan smoke test passed"
