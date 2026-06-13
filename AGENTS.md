@@ -2,7 +2,7 @@
 
 This repository is primarily operated through `pi` for podcast post-production work.
 
-Default to the `podguy-post-production` workflow unless the user explicitly asks for something else. Use `podguy-clip-cutter` when the user asks to export or cut social clips.
+Default to the `podguy-post-production` workflow unless the user explicitly asks for something else. Use `podguy-clip-cutter` when the user asks to export or cut social clips. Use `podguy-youtube-publisher` when the user asks to upload, schedule, or manage episodes on YouTube.
 
 ## Primary tasks
 
@@ -12,6 +12,7 @@ Default to the `podguy-post-production` workflow unless the user explicitly asks
 - give editorial feedback such as cuts, highlights, weak sections, and insert opportunities
 - cut selected highlight moments into review exports for TikTok, Reels, YouTube Shorts, trailers, or social posts
 - draft publishing assets such as show notes, quote sheets, and proper noun review
+- upload finished episodes to YouTube with metadata composed from analysis artifacts
 
 ## Podcast profile
 
@@ -28,6 +29,7 @@ Default to the `podguy-post-production` workflow unless the user explicitly asks
 - skip the visual scanner for audio-only inputs
 - use transcript evidence and timecodes whenever possible when giving editorial feedback
 - treat generated clip media as review exports, not final mastered social edits
+- never upload to YouTube without explicit user confirmation of the final metadata; default uploads to private
 - use `scripts/download_sample_media.sh` when a real open-license video-podcast sample is helpful; keep downloaded samples under gitignored `dist/`
 
 ## Interaction guidance
@@ -55,10 +57,12 @@ For synthetic or test fixture inputs, default to a leaner evaluation mindset:
 - Startup extension: `src/podguy-startup.ts`
 - Post-production skill: `src/podguy-post-production/SKILL.md`
 - Clip-cutter skill: `src/podguy-clip-cutter/SKILL.md`
+- YouTube publisher skill: `src/podguy-youtube-publisher/SKILL.md`
 - Transcript CLI: `scripts/transcribe_video.py`
 - Transcript prep CLI: `scripts/prepare_transcript_analysis.py`
 - Scanner CLI: `scripts/scan_podcast.swift`
 - Clip cutter CLI: `scripts/cut_clips.py`
+- YouTube publisher CLI: `scripts/youtube_publish.py`
 
 ## Validation commands
 
