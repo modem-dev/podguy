@@ -1,4 +1,8 @@
 # Copy this file to podguy.toml and customize it for your show.
+#
+# The top-level fields are a show profile read by pi as context (prose, not
+# strict config). The named sections below are read by code:
+#   [youtube] -> scripts/youtube_publish.py
 
 show_name = "My Podcast"
 show_slug = "my-podcast"
@@ -8,22 +12,6 @@ tone = "smart, conversational, practical"
 audience = "listeners interested in the episode topic"
 chapter_style = "concise, listener-friendly chapters"
 preferred_review = "quick_pass"
-
-[outputs]
-chapters = true
-clips = true
-cuts = true
-show_notes = true
-quotes = true
-proper_nouns = true
-
-[transcription]
-preferred_backend = "auto"
-preferred_model = ""
-
-[video_scan]
-enabled = true
-sample_interval_seconds = 0.5
 
 [youtube]
 # Defaults for scripts/youtube_publish.py; flags override these.
