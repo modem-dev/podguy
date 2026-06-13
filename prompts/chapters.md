@@ -11,7 +11,7 @@ Workflow:
    `uv run python scripts/prepare_transcript_analysis.py <transcript-dir> --output-dir dist/analysis/<slug> --slug <slug> --plain-output-names`
 3. Read the prepared transcript artifacts. For long transcripts, use the chunk index first and then inspect the most relevant chunk sections.
 4. Decide chapter boundaries and titles with pi-driven judgment. Use `chapter_style` from `podguy.toml` or `podcast.toml` when present.
-5. Write the final chapter block to `dist/analysis/<slug>/chapters.txt`.
+5. Write the final chapter block to `dist/analysis/<slug>/chapters.md`.
 6. Reply with the output path and the final chapter block.
 
 Formatting rules:

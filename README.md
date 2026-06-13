@@ -35,10 +35,8 @@ brew install uv ffmpeg
 Notes:
 
 - `ffmpeg` is used for fixtures, transcription backends, and clip cutting.
-- `uv` runs the Python scripts and optional transcription dependency groups.
-- The video scanner is macOS-only and uses Swift / AVFoundation / Vision.
-
-Before first use, authenticate pi with `/login` or your usual provider API key setup.
+- `uv` runs the Python scripts and optional transcription dependency groups. The first `uv` command creates a local `.venv/` and may download Python automatically — this is normal and only happens once.
+- The video scanner is macOS-only and uses Swift / AVFoundation / Vision. Everything else works cross-platform (Linux: install `uv` and `ffmpeg` via your package manager).
 
 Set up a real transcription backend when you are ready to transcribe episodes:
 
@@ -62,6 +60,8 @@ Start podguy from the repo root:
 ./podguy
 ```
 
+On first launch, type `/login` inside pi to connect your model provider (or use your usual API key setup).
+
 Then ask pi for a concrete episode task:
 
 ```text
@@ -78,6 +78,8 @@ For broad requests, podguy should clarify between:
 - **full review**: quick pass + chapters + clips + cuts + show notes + quotes + proper noun review
 
 ## Common workflows
+
+You don't need to memorize these — pi runs them for you when you ask in natural language. They're here for reference and debugging.
 
 ### Scan a video
 
@@ -160,7 +162,7 @@ The cutter writes generated media plus `manifest.json`. Vertical and square mode
 
 ### Publish to YouTube
 
-One-time setup: create a Google Cloud project with the YouTube Data API v3 enabled, create a Desktop-app OAuth client, save the JSON to `~/.config/podguy/youtube/client_secret.json`, then authenticate:
+One-time setup: create a Google Cloud project with the YouTube Data API v3 enabled, create a Desktop-app OAuth client, and save the downloaded JSON to `~/.config/podguy/youtube/client_secret.json`. On the OAuth consent screen, keep the app in Testing mode and add your own Google account as a test user — otherwise the auth flow fails with `access_denied`. Then authenticate:
 
 ```bash
 uv sync --group youtube
@@ -208,7 +210,7 @@ hosts = ["Host One", "Host Two"]
 tone = "curious, direct, practical"
 audience = "builders and technical operators"
 chapter_style = "concise descriptive titles"
-preferred_review = "quick pass"
+preferred_review = "quick_pass"
 ```
 
 `podcast.toml` is also accepted as a compatible profile name.

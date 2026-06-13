@@ -63,7 +63,7 @@ For synthetic or test fixture inputs, default to a leaner evaluation mindset and
 ### Quick pass
 
 1. Start from the input media file. It can be audio or video as long as `scripts/transcribe_video.py` can process it.
-2. If the input is video, optionally run the visual scanner to find likely interstitials and other non-host inserts. Skip this for audio-only inputs.
+2. If the input is video and you are on macOS, optionally run the visual scanner to find likely interstitials and other non-host inserts. Skip this for audio-only inputs and on non-macOS systems (say why when skipping).
 3. Run the transcript tool on the same media file.
 4. Prepare deterministic transcript artifacts for pi with `scripts/prepare_transcript_analysis.py`.
 5. Return a short grounded summary with:
@@ -105,7 +105,7 @@ Recommended single-show pattern:
 - `dist/analysis/<episode>/transcript_large/` when keeping multiple transcript variants
 - `dist/analysis/<episode>/transcript_chunks.md`
 - `dist/analysis/<episode>/transcript_index.json`
-- `dist/analysis/<episode>/chapters.txt`
+- `dist/analysis/<episode>/chapters.md`
 - `dist/analysis/<episode>/clips.md`
 - `dist/analysis/<episode>/clips/cuts/`
 - `dist/analysis/<episode>/clips/shorts/`
