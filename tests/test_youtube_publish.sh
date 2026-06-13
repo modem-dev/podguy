@@ -31,7 +31,7 @@ show_name = "Test Show"
 default_privacy = "unlisted"
 default_category = "28"
 default_tags = ["podcast", "markets"]
-description_footer = "Subscribe for more."
+description_footer = "Subscribe for more. #podcast" # trailing comment
 EOF
 
 uv run python scripts/youtube_publish.py upload "$media" \
@@ -56,7 +56,9 @@ assert body["status"]["selfDeclaredMadeForKids"] is False
 description = body["snippet"]["description"]
 assert "A great episode about markets." in description
 assert "Chapters:\n00:00 Intro" in description
-assert description.endswith("Subscribe for more.")
+# Hashtag in a quoted footer must survive the TOML fallback parser's
+# comment stripping, while the real trailing comment is removed.
+assert description.endswith("Subscribe for more. #podcast"), description
 print("youtube publish dry-run assertions passed")
 PY
 

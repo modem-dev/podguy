@@ -87,12 +87,27 @@ def fail(message: str) -> "NoReturn":  # noqa: F821 - py39 compat, comment only
 # ---------------------------------------------------------------------------
 
 
+def strip_toml_comment(line: str) -> str:
+    """Drop a trailing # comment, ignoring # characters inside quoted strings."""
+    in_quote = ""
+    for index, char in enumerate(line):
+        if in_quote:
+            if char == in_quote:
+                in_quote = ""
+        elif char in "\"'":
+            in_quote = char
+        elif char == "#":
+            return line[:index]
+    return line
+
+
 def parse_toml_youtube_section(text: str) -> dict[str, Any]:
     """Read the [youtube] table from podguy.toml.
 
     Uses tomllib when available (Python 3.11+) and falls back to a minimal
     flat-key parser for older interpreters. Only simple keys are supported;
-    the fallback does not handle [youtube.*] subtables.
+    the fallback does not handle [youtube.*] subtables, multiline strings,
+    or array items containing quote characters.
     """
     try:
         import tomllib
@@ -104,7 +119,7 @@ def parse_toml_youtube_section(text: str) -> dict[str, Any]:
     section: dict[str, Any] = {}
     in_youtube = False
     for raw_line in text.splitlines():
-        line = raw_line.split("#", 1)[0].strip()
+        line = strip_toml_comment(raw_line).strip()
         if not line:
             continue
         if line.startswith("["):
@@ -506,7 +521,9 @@ def cmd_update(args: argparse.Namespace) -> int:
         snippet["tags"] = [tag.strip() for tag in args.tags.split(",") if tag.strip()]
 
     description = snippet.get("description", "")
-    if len(description) > 5000:
+    # Only validate length when this update changes the description; existing
+    # Studio-edited descriptions can legitimately exceed the API limit.
+    if (args.description or args.description_file) and len(description) > 5000:
         fail(f"error: description is {len(description)} characters; YouTube allows 5000")
 
     # videos.update clears writable snippet fields that are omitted, so carry
