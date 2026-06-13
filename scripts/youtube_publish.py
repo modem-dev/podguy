@@ -53,6 +53,7 @@ import json
 import os
 import re
 import sys
+import tomllib
 from pathlib import Path
 from typing import Any, Optional
 
@@ -87,60 +88,12 @@ def fail(message: str) -> "NoReturn":  # noqa: F821 - py39 compat, comment only
 # ---------------------------------------------------------------------------
 
 
-def strip_toml_comment(line: str) -> str:
-    """Drop a trailing # comment, ignoring # characters inside quoted strings."""
-    in_quote = ""
-    for index, char in enumerate(line):
-        if in_quote:
-            if char == in_quote:
-                in_quote = ""
-        elif char in "\"'":
-            in_quote = char
-        elif char == "#":
-            return line[:index]
-    return line
-
-
 def parse_toml_youtube_section(text: str) -> dict[str, Any]:
-    """Read the [youtube] table from podguy.toml.
-
-    Uses tomllib when available (Python 3.11+) and falls back to a minimal
-    flat-key parser for older interpreters. Only simple keys are supported;
-    the fallback does not handle [youtube.*] subtables, multiline strings,
-    or array items containing quote characters.
-    """
+    """Read the [youtube] table from podguy.toml."""
     try:
-        import tomllib
-
         return dict(tomllib.loads(text).get("youtube", {}))
-    except ModuleNotFoundError:
-        pass
-
-    section: dict[str, Any] = {}
-    in_youtube = False
-    for raw_line in text.splitlines():
-        line = strip_toml_comment(raw_line).strip()
-        if not line:
-            continue
-        if line.startswith("["):
-            in_youtube = line == "[youtube]"
-            continue
-        if not in_youtube or "=" not in line:
-            continue
-        key, value = (part.strip() for part in line.split("=", 1))
-        if value in ("true", "false"):
-            section[key] = value == "true"
-        elif value.startswith("[") and value.endswith("]"):
-            items = re.findall(r"[\"']([^\"']*)[\"']", value)
-            section[key] = items
-        elif len(value) >= 2 and value[0] in "\"'" and value[-1] == value[0]:
-            section[key] = value[1:-1]
-        else:
-            try:
-                section[key] = int(value)
-            except ValueError:
-                section[key] = value
-    return section
+    except tomllib.TOMLDecodeError as error:
+        fail(f"error: could not parse profile TOML: {error}")
 
 
 def load_profile_defaults(profile_path: Optional[str]) -> dict[str, Any]:

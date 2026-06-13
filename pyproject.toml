@@ -2,7 +2,7 @@
 name = "podguy"
 version = "0.1.0"
 description = "Small tooling repo for repeatable podcast and video-podcast post-production tasks."
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 dependencies = []
 
 [dependency-groups]
