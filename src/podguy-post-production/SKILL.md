@@ -1,7 +1,7 @@
 ---
 name: podguy-post-production
 description: Use for generic podcast and video-podcast post-production. Run the repo's transcript and optional visual scanner tools on episode media, prepare transcript artifacts, propose YouTube/podcast chapters, and give editorial feedback such as cuts, clips, show notes, quotes, highlights, and proper noun cleanup.
-compatibility: Launch pi from the repository root. The visual scanner requires macOS and Swift. The transcript CLI requires Python 3.9+, uv, and an installed transcription backend.
+compatibility: Launch pi from the repository root. The visual scanner requires macOS and Swift. The transcript CLI requires Python 3.11+, uv, and an installed transcription backend.
 ---
 
 # podguy Post Production

@@ -13,6 +13,7 @@ All notable user-visible changes to this project are documented in this file.
 
 - Discover skills dynamically in the startup header and show analyzed episodes from `dist/analysis/`, so returning users can see what already exists.
 - Remove the unused `[outputs]`, `[transcription]`, and `[video_scan]` sections from `podguy.example.toml`; document which sections are read by code vs. by the agent.
+- Require Python 3.11+ (managed automatically by uv) and parse `podguy.toml` with the standard-library TOML parser.
 
 ### Fixed
 
