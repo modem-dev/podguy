@@ -14,9 +14,10 @@ else
   cat >&2 <<'EOF'
 error: pi is not installed.
 
-Install it with one of:
-  npm install -g @mariozechner/pi-coding-agent
-  npm install --save-dev @mariozechner/pi-coding-agent
+From the repo root, run:
+  npm install
+
+(or install globally: npm install -g @earendil-works/pi-coding-agent)
 
 Then run ./podguy again.
 EOF

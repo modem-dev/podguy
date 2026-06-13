@@ -29,7 +29,10 @@ uv run --group youtube python scripts/youtube_publish.py auth
 
 The token is cached at `~/.config/podguy/youtube/token.json`. Both paths can be overridden with `--client-secrets` / `--token` or `PODGUY_YT_CLIENT_SECRETS` / `PODGUY_YT_TOKEN`.
 
-Personal-channel projects can stay in OAuth "testing" mode with the user's account added as a test user. Warn the user: videos uploaded through unverified API projects may be locked private until the project passes a YouTube API audit, so verify scheduling behavior before relying on it.
+Personal-channel projects can stay in OAuth "testing" mode with the user's account added as a test user. Two caveats to surface:
+
+- Videos uploaded through unverified API projects may be locked private until the project passes a YouTube API audit, so verify scheduling behavior before relying on it.
+- While the OAuth app is in Testing mode, Google expires refresh tokens after about 7 days; expect to re-run the `auth` command periodically (or move the consent screen to "In production" to stop the expiry).
 
 ## Inputs to gather
 

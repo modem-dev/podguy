@@ -91,7 +91,12 @@ def choose_backend(requested: str) -> str:
             return name
 
     raise SystemExit(
-        "no transcription backend found. Install one of: mlx-whisper, faster-whisper, or whisper. "
+        "no transcription backend found.\n"
+        "Install one and re-run with the matching dependency group, e.g.:\n"
+        "  uv sync --group transcribe-mlx\n"
+        "  uv run --group transcribe-mlx python scripts/transcribe_video.py ...\n"
+        "(groups: transcribe-mlx for Apple Silicon, transcribe-faster cross-platform, "
+        "transcribe-whisper for OpenAI Whisper)\n"
         "Or run the smoke test with --backend mock."
     )
 

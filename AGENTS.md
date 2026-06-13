@@ -26,7 +26,7 @@ Default to the `podguy-post-production` workflow unless the user explicitly asks
 - reuse existing analysis outputs when they already match the requested episode/version
 - treat scanner results as heuristic review aids, not exact edit points
 - support audio-only files, video drafts, preview exports, and final renders
-- skip the visual scanner for audio-only inputs
+- skip the visual scanner for audio-only inputs and on non-macOS systems (it requires Swift/AVFoundation); say why when skipping
 - use transcript evidence and timecodes whenever possible when giving editorial feedback
 - treat generated clip media as review exports, not final mastered social edits
 - never upload to YouTube without explicit user confirmation of the final metadata; default uploads to private

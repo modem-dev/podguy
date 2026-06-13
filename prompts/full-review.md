@@ -20,7 +20,7 @@ Workflow:
    - `dist/analysis/<slug>/transcript_chunks.md`
    - `dist/analysis/<slug>/transcript_index.json`
 5. Produce these outputs under `dist/analysis/<slug>/`:
-   - `dist/analysis/<slug>/chapters.txt`
+   - `dist/analysis/<slug>/chapters.md`
    - `dist/analysis/<slug>/clips.md`
    - `dist/analysis/<slug>/cut_report.md`
    - `dist/analysis/<slug>/show_notes.md`

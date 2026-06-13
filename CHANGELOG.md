@@ -12,3 +12,8 @@ All notable user-visible changes to this project are documented in this file.
 ### Changed
 
 ### Fixed
+
+- Standardize the chapters artifact on `dist/analysis/<slug>/chapters.md` so the chapters and YouTube publish workflows agree.
+- Correct the launcher's "pi is not installed" message to point at `npm install` and the renamed `@earendil-works/pi-coding-agent` package.
+- Document the OAuth test-user requirement, testing-mode token expiry, uv first-run behavior, and the macOS-only scanner skip rule.
+- Give the "no transcription backend found" error actionable `uv sync --group ...` commands.
