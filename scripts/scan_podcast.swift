@@ -173,12 +173,26 @@ let outputDir = URL(fileURLWithPath: CommandLine.arguments[2], isDirectory: true
 let interval = Double(CommandLine.arguments.count >= 4 ? CommandLine.arguments[3] : "0.5") ?? 0.5
 
 let fm = FileManager.default
+
+if !fm.fileExists(atPath: inputPath) {
+    fputs("error: input file not found: \(inputPath)\n", stderr)
+    exit(1)
+}
+if !(interval > 0) {
+    fputs("error: sample interval must be greater than 0\n", stderr)
+    exit(1)
+}
 try fm.createDirectory(at: outputDir, withIntermediateDirectories: true)
 let thumbsDir = outputDir.appendingPathComponent("thumbs", isDirectory: true)
 try fm.createDirectory(at: thumbsDir, withIntermediateDirectories: true)
 
 let asset = AVURLAsset(url: URL(fileURLWithPath: inputPath))
 let durationSeconds = CMTimeGetSeconds(asset.duration)
+
+if !durationSeconds.isFinite || durationSeconds <= 0 {
+    fputs("error: could not read a media duration from \(inputPath); is it a valid video file?\n", stderr)
+    exit(1)
+}
 let frameGenerator = AVAssetImageGenerator(asset: asset)
 frameGenerator.appliesPreferredTrackTransform = true
 frameGenerator.maximumSize = CGSize(width: 160, height: 90)
@@ -212,6 +226,15 @@ for i in 0..<sampleCount {
 }
 
 let scanElapsed = Date().timeIntervalSince(scanStart)
+
+if samples.count < 3 {
+    fputs(
+        "error: sampled only \(samples.count) frame(s); need at least 3. "
+            + "Audio-only inputs are not supported by the visual scanner.\n",
+        stderr)
+    exit(1)
+}
+
 let diffs = samples.dropFirst().map { $0.diff }
 let p95 = percentile(diffs, 0.95)
 let p98 = percentile(diffs, 0.98)

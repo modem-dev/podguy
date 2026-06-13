@@ -30,6 +30,7 @@ EOF
 }
 
 output_dir="dist/test-fixtures/open-license/cordkillers-572"
+output_dir_set=0
 dry_run=0
 
 for arg in "$@"; do
@@ -47,7 +48,13 @@ for arg in "$@"; do
       exit 1
       ;;
     *)
+      if [[ "$output_dir_set" -eq 1 ]]; then
+        echo "error: multiple output directories given: $output_dir and $arg" >&2
+        usage >&2
+        exit 1
+      fi
       output_dir="$arg"
+      output_dir_set=1
       ;;
   esac
 done
@@ -68,6 +75,7 @@ crf=${SAMPLE_CRF:-23}
 
 mkdir -p "$output_dir"
 output_video="$output_dir/${basename}.mp4"
+partial_video="$output_dir/${basename}.partial.mp4"
 attribution_file="$output_dir/ATTRIBUTION.md"
 command_file="$output_dir/ffmpeg-command.txt"
 
@@ -88,6 +96,13 @@ ffmpeg_command=(
   -movflags +faststart
   "$output_video"
 )
+
+# The encode itself targets a .partial file that is atomically renamed on
+# success, so an interrupted download never leaves a truncated sample that
+# looks complete to later "reuse existing outputs" passes.
+run_command=("${ffmpeg_command[@]}")
+run_index=$((${#run_command[@]} - 1))
+run_command[run_index]="$partial_video"
 
 cat >"$attribution_file" <<EOF
 # Open-license sample media attribution
@@ -142,7 +157,10 @@ if ! command -v ffmpeg >/dev/null 2>&1; then
   exit 1
 fi
 
-"${ffmpeg_command[@]}"
+trap 'rm -f "$partial_video"' EXIT
+"${run_command[@]}"
+mv "$partial_video" "$output_video"
+trap - EXIT
 
 if command -v ffprobe >/dev/null 2>&1; then
   ffprobe -v error -show_entries format=duration,size -of default=noprint_wrappers=1 "$output_video"

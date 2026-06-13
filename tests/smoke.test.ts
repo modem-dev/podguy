@@ -1,15 +1,17 @@
 import { describe, expect, test } from "vitest";
 import { execFileSync } from "node:child_process";
+import { readdirSync } from "node:fs";
 
-const smokeTests = [
-  "tests/test_transcribe_video.sh",
-  "tests/test_prepare_transcript_analysis.sh",
-  "tests/test_scan_podcast.sh",
-  "tests/test_cut_clips.sh",
-  "tests/test_youtube_publish.sh",
-  "tests/test_download_sample_media.sh",
-  "tests/test_launcher.sh",
-];
+// Discover smoke tests instead of maintaining a registry; a new
+// tests/test_*.sh file is automatically picked up.
+const smokeTests = readdirSync("tests")
+  .filter((name) => name.startsWith("test_") && name.endsWith(".sh"))
+  .sort()
+  .map((name) => `tests/${name}`);
+
+if (smokeTests.length === 0) {
+  throw new Error("no tests/test_*.sh smoke tests found");
+}
 
 describe("podguy smoke tests", () => {
   for (const script of smokeTests) {
