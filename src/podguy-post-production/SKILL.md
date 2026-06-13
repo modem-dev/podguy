@@ -35,7 +35,6 @@ Use profile fields such as:
 - `audience`
 - `chapter_style`
 - `preferred_review`
-- `[outputs]` toggles
 
 Do not assume a specific show, hosts, audience, tone, domain, or episode naming pattern unless the user or profile provides it.
 

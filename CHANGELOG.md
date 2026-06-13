@@ -11,6 +11,9 @@ All notable user-visible changes to this project are documented in this file.
 
 ### Changed
 
+- Discover skills dynamically in the startup header and show analyzed episodes from `dist/analysis/`, so returning users can see what already exists.
+- Remove the unused `[outputs]`, `[transcription]`, and `[video_scan]` sections from `podguy.example.toml`; document which sections are read by code vs. by the agent.
+
 ### Fixed
 
 - Standardize the chapters artifact on `dist/analysis/<slug>/chapters.md` so the chapters and YouTube publish workflows agree.

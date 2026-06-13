@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { relative, resolve } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
@@ -20,6 +20,35 @@ function toDisplayPath(filePath: string): string {
     return `~/${relative(home, filePath).replaceAll("\\", "/")}`;
   }
   return normalized;
+}
+
+function discoverSkillPaths(): string[] {
+  // The launcher loads every skill under src/; discover them the same way so
+  // new skills show up here without editing this list.
+  const skillsRoot = resolve(cwd, "src");
+  if (!existsSync(skillsRoot)) return [];
+  try {
+    return readdirSync(skillsRoot, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => resolve(skillsRoot, entry.name, "SKILL.md"))
+      .filter((path) => existsSync(path))
+      .sort();
+  } catch {
+    return [];
+  }
+}
+
+function analyzedEpisodes(): string[] {
+  const analysisRoot = resolve(cwd, "dist/analysis");
+  if (!existsSync(analysisRoot)) return [];
+  try {
+    return readdirSync(analysisRoot, { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      .sort();
+  } catch {
+    return [];
+  }
 }
 
 function readProfileSummary(): string | undefined {
@@ -65,11 +94,7 @@ export default function podguyStartupExtension(pi: ExtensionAPI) {
 
         const projectAgents = resolve(cwd, "AGENTS.md");
         const userAgents = resolve(home, ".pi/agent/AGENTS.md");
-        const skillPaths = [
-          resolve(cwd, "src/podguy-post-production/SKILL.md"),
-          resolve(cwd, "src/podguy-clip-cutter/SKILL.md"),
-          resolve(cwd, "src/podguy-youtube-publisher/SKILL.md"),
-        ];
+        const skillPaths = discoverSkillPaths();
         const promptsPath = resolve(cwd, "prompts");
         const extensionPath = resolve(cwd, "src/podguy-startup.ts");
         const profilePath = [resolve(cwd, "podguy.toml"), resolve(cwd, "podcast.toml")].find(
@@ -103,6 +128,13 @@ export default function podguyStartupExtension(pi: ExtensionAPI) {
             : [];
 
         const profileSummary = readProfileSummary();
+        const episodes = analyzedEpisodes();
+        const episodesSummary =
+          episodes.length === 0
+            ? "no episodes analyzed yet"
+            : episodes.length <= 6
+              ? `episodes analyzed: ${episodes.join(", ")}`
+              : `episodes analyzed: ${episodes.slice(0, 6).join(", ")} (+${episodes.length - 6} more)`;
 
         return [
           accent("                     __                 "),
@@ -113,6 +145,7 @@ export default function podguyStartupExtension(pi: ExtensionAPI) {
           accent("/_/                /____/      /____/"),
           muted("  Podcast post-production"),
           dim(profileSummary ? `  profile: ${profileSummary}` : "  no podguy.toml profile yet"),
+          dim(`  ${episodesSummary}`),
           "",
           ...formatSection(theme, "Context", contextItems),
           ...formatSection(theme, "Profile", profileItems),
