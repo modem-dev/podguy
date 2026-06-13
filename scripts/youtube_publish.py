@@ -68,7 +68,7 @@ SCOPES = [
 
 CHUNK_SIZE = 8 * 1024 * 1024
 
-PUBLISH_AT_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(Z|[+-]\d{2}:\d{2})$")
+PUBLISH_AT_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$")
 
 MISSING_DEPS_HINT = (
     "error: google API client libraries are not installed.\n"
@@ -91,7 +91,8 @@ def parse_toml_youtube_section(text: str) -> dict[str, Any]:
     """Read the [youtube] table from podguy.toml.
 
     Uses tomllib when available (Python 3.11+) and falls back to a minimal
-    flat-key parser for older interpreters. Only simple keys are supported.
+    flat-key parser for older interpreters. Only simple keys are supported;
+    the fallback does not handle [youtube.*] subtables.
     """
     try:
         import tomllib
@@ -195,6 +196,7 @@ def build_service(args: argparse.Namespace):
     if creds.expired and creds.refresh_token:
         creds.refresh(Request())
         token.write_text(creds.to_json(), encoding="utf-8")
+        token.chmod(0o600)
     if not creds.valid:
         fail(f"error: cached token at {token} is invalid; re-run the auth command")
 
@@ -325,8 +327,8 @@ def cmd_upload(args: argparse.Namespace) -> int:
     try:
         while response is None:
             progress, response = request.next_chunk()
-            if progress:
-                print(f"  {int(progress.progress() * 100)}%", flush=True)
+            percent = 100 if response is not None else int(progress.progress() * 100)
+            print(f"  {percent}%", flush=True)
     except HttpError as error:
         fail(api_error_message(error))
 
@@ -334,9 +336,9 @@ def cmd_upload(args: argparse.Namespace) -> int:
     print(f"ok: uploaded video {video_id}")
     print(f"  https://studio.youtube.com/video/{video_id}/edit")
 
-    playlist_id = args.playlist_id or profile.get("playlist_id")
+    playlist_id = str(args.playlist_id or profile.get("playlist_id") or "").strip()
     if playlist_id:
-        add_video_to_playlist(service, str(playlist_id), video_id)
+        add_video_to_playlist(service, playlist_id, video_id)
     if args.thumbnail:
         set_video_thumbnail(service, video_id, args.thumbnail)
     if args.caption:
@@ -360,7 +362,7 @@ def add_video_to_playlist(service, playlist_id: str, video_id: str) -> None:
         service.playlistItems().insert(part="snippet", body=body).execute()
         print(f"ok: added {video_id} to playlist {playlist_id}")
     except HttpError as error:
-        fail(api_error_message(error))
+        fail(f"failed to add {video_id} to playlist {playlist_id}:\n{api_error_message(error)}")
 
 
 def set_video_thumbnail(service, video_id: str, thumbnail: str) -> None:
@@ -376,7 +378,7 @@ def set_video_thumbnail(service, video_id: str, thumbnail: str) -> None:
         ).execute()
         print(f"ok: thumbnail set on {video_id}")
     except HttpError as error:
-        fail(api_error_message(error))
+        fail(f"failed to set thumbnail on {video_id}:\n{api_error_message(error)}")
 
 
 def insert_caption(service, video_id: str, caption: str, language: str) -> None:
@@ -399,7 +401,7 @@ def insert_caption(service, video_id: str, caption: str, language: str) -> None:
         ).execute()
         print(f"ok: caption track ({language}) uploaded for {video_id}")
     except HttpError as error:
-        fail(api_error_message(error))
+        fail(f"failed to upload caption for {video_id}:\n{api_error_message(error)}")
 
 
 def cmd_set_thumbnail(args: argparse.Namespace) -> int:
@@ -503,15 +505,22 @@ def cmd_update(args: argparse.Namespace) -> int:
     if args.tags is not None:
         snippet["tags"] = [tag.strip() for tag in args.tags.split(",") if tag.strip()]
 
-    body: dict[str, Any] = {
-        "id": args.video_id,
-        "snippet": {
-            "title": snippet["title"],
-            "description": snippet.get("description", ""),
-            "categoryId": snippet["categoryId"],
-            "tags": snippet.get("tags", []),
-        },
+    description = snippet.get("description", "")
+    if len(description) > 5000:
+        fail(f"error: description is {len(description)} characters; YouTube allows 5000")
+
+    # videos.update clears writable snippet fields that are omitted, so carry
+    # everything forward, including defaultLanguage when set.
+    update_snippet: dict[str, Any] = {
+        "title": snippet["title"],
+        "description": description,
+        "categoryId": snippet["categoryId"],
+        "tags": snippet.get("tags", []),
     }
+    if snippet.get("defaultLanguage"):
+        update_snippet["defaultLanguage"] = snippet["defaultLanguage"]
+
+    body: dict[str, Any] = {"id": args.video_id, "snippet": update_snippet}
     parts = "snippet"
     if args.privacy:
         if args.privacy not in ("private", "unlisted", "public"):
@@ -621,7 +630,10 @@ def build_parser() -> argparse.ArgumentParser:
     update.add_argument("video_id")
     update.add_argument("--title")
     update.add_argument("--description")
-    update.add_argument("--description-file")
+    update.add_argument(
+        "--description-file",
+        help="file with the full description (unlike upload, no chapters/footer composition)",
+    )
     update.add_argument("--tags", help="comma-separated tags")
     update.add_argument("--privacy", choices=["private", "unlisted", "public"])
     add_auth_arguments(update)
